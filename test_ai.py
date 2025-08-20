@@ -53,7 +53,7 @@ class DonkeyCarWrapper(gym.Wrapper):
         """Preprocess observation (image)"""
         if obs is not None:
             # Resize image to standard size
-            obs = self._resize_image(obs, (80, 120))
+            obs = self._resize_image(obs, (160, 120))
             # Normalize pixel values
             obs = obs.astype(np.float32) / 255.0
         return obs
