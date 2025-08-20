@@ -144,6 +144,7 @@ def train_ppo(env, total_timesteps=500000, save_path="models/ppo_waveshare"):
         "CnnPolicy",
         env,
         verbose=1,
+        device="cpu",
         learning_rate=0.0003,
         n_steps=2048,
         batch_size=64,
