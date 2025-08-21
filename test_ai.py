@@ -110,7 +110,8 @@ def create_env(env_name="donkey-waveshare-v0", monitor_dir=None):
         "font_size": 100,
         "racer_name": "AI_Agent",
         "country": "USA",
-        "bio": "AI Training with Stable Baselines3 PPO"
+        "bio": "AI Training with Stable Baselines3 PPO",
+        "start_delay": 0.5
     })
     
     # Wrap with custom wrapper
