@@ -173,7 +173,7 @@ if __name__ == '__main__':
         model = PPO(
             'CnnPolicy',
             train_env,
-            learning_rate=1e-4-3e-4,
+            learning_rate=3e-4,
             n_epochs=15,
             vf_coef=0.8,
             ent_coef=0.05,
