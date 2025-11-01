@@ -14,3 +14,5 @@ Additional Notes
 Current progress
 =================
 We have developed a native/mimic two car racing simulation by using two respectively trained models; one that is for a fast car and one that is for a slow car. Then, we deploy them and run them such that they are on the same port and run in the same simulation. Sadly, the faster car crashes into the slower car, but it is able to steer around it and overtake in some cases. Our next steps are to create real multi-agent reinforcement learning and generating more advanced models to do so. 
+
+We have also developed a training script for the multi agent reinforcement learning that uses a frozen policy but then loads in a previous model every 20,000 steps. The idea is that they are trying to verse each other(the actual trained model vs the older version) and their progress is compared to one another with respect to their rewards. It is not fully confirmed to be fully working, it's a draft for now. 
