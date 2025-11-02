@@ -1,10 +1,8 @@
+
 """
 train_multiagent.py 
 Multi-agent competitive racing training script for two cars.
-Uses frozen copy to vs itself with model loading
-Updated 11/1/25
-Bener Dulger
-NOT FINAL OR FULLY WORKING YET
+Uses self-play where main agent trains against frozen copies of itself.
 """
 
 import os
@@ -180,12 +178,19 @@ class MultiAgentRacingEnv(gym.Env):
         # Calculate competitive reward
         competitive_reward = self._calculate_competitive_reward()
         
-        # Episode done if either car is done or max steps reached
-        done = main_done or opp_done or self.step_count >= 500
+        # IMPORTANT: Only end episode if MAIN car is done
+        # Don't let opponent crashes ruin main car's training
+        done = main_done or self.step_count >= 1000
+        
+        # If opponent crashes but main doesn't, give big win bonus
+        if opp_done and not main_done and self.step_count < 500:
+            competitive_reward += 20.0  # Opponent crashed, you win!
+            print(f"Opponent crashed at step {self.step_count}, main car wins!")
         
         # Add competitive info to main_info
         self.main_info['competitive_reward'] = competitive_reward
         self.main_info['step_count'] = self.step_count
+        self.main_info['opponent_crashed'] = opp_done
         
         return self.main_obs, competitive_reward, done, self.main_info
     
