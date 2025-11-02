@@ -1,4 +1,3 @@
-
 """
 train_multiagent.py 
 Multi-agent competitive racing training script for two cars.
@@ -117,6 +116,13 @@ class MultiAgentRacingEnv(gym.Env):
         
     def _make_single_env(self, port, car_name):
         """Create a single car environment"""
+        # Stagger starting positions to prevent collision
+        # Main car starts slightly ahead, opponent starts behind
+        start_offset = 0 if car_name == "main" else -3.0  # Opponent 3 meters back
+        
+        # Opponent gets delayed start to prevent ramming
+        start_delay = 2.0 if car_name == "main" else 4.0  # Opponent waits 2 extra seconds
+        
         conf = {
             'remote': True,
             'host': 'localhost',
@@ -124,7 +130,7 @@ class MultiAgentRacingEnv(gym.Env):
             'cam_resolution': CAM_RESOLUTION,
             'abort_on_collision': False,
             'frame_skip': 1,
-            'start_delay': 2.0,
+            'start_delay': start_delay,  # Different delay for each car
             'max_cte': 8.0,
             'steer_limit': 1.0,
             'throttle_min': 0.0,
@@ -136,6 +142,7 @@ class MultiAgentRacingEnv(gym.Env):
             'body_style': 'donkey',
             'font_size': 100,
             'body_rgb': (255, 0, 0) if car_name == "main" else (0, 0, 255),
+            'offset': start_offset,  # Offset starting position
         }
         env = gym.make(myconfig.DONKEY_GYM_ENV_NAME, conf=conf)
         env = ThrottleBiasWrapper(env, t_min=0.15)
@@ -148,7 +155,6 @@ class MultiAgentRacingEnv(gym.Env):
         self.step_count = 0
         
         # Get initial info
-        # Note: info might not be available on reset, will get it on first step
         self.main_info = {}
         self.opp_info = {}
         
@@ -180,11 +186,12 @@ class MultiAgentRacingEnv(gym.Env):
         
         # IMPORTANT: Only end episode if MAIN car is done
         # Don't let opponent crashes ruin main car's training
-        done = main_done or self.step_count >= 1000
+        done = main_done or self.step_count >= 500
         
         # If opponent crashes but main doesn't, give big win bonus
         if opp_done and not main_done and self.step_count < 500:
             competitive_reward += 20.0  # Opponent crashed, you win!
+            print(f"Opponent crashed at step {self.step_count}, main car wins!")
         
         # Add competitive info to main_info
         self.main_info['competitive_reward'] = competitive_reward
