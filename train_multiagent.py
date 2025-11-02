@@ -185,7 +185,6 @@ class MultiAgentRacingEnv(gym.Env):
         # If opponent crashes but main doesn't, give big win bonus
         if opp_done and not main_done and self.step_count < 500:
             competitive_reward += 20.0  # Opponent crashed, you win!
-            print(f"Opponent crashed at step {self.step_count}, main car wins!")
         
         # Add competitive info to main_info
         self.main_info['competitive_reward'] = competitive_reward
